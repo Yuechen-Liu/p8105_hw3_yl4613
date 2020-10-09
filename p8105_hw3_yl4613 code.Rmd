@@ -94,9 +94,23 @@ instacart %>%
 ### Problem 2
 ### load and tidy the data
 ```{r}
-ac_data <- read.csv('')
-
+ac_data = read.csv(
+	'./accel_data.csv') %>% 
+	janitor::clean_names() %>% 
+	pivot_longer(activity_1:activity_1440,
+							 names_to = 'minute_of_the_day',
+							 values_to = 'activity_counts',
+							 names_prefix = 'activity_') %>% 
+	mutate(
+		type_of_day = case_when(
+			day %in% c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday') ~ 'weekday',
+			day %in% c('Saturday', 'Sunday') ~ 'weekend'),
+			day = as.factor(day),
+		minute_of_the_day = as.integer(minute_of_the_day), 
+		type_of_day = as.factor(type_of_day))
 ```
+The resulting data is tidier than the original dataset. It contains: number of the week (1-5), day_id(useless now so I left it alone), name of the data (Monday-Sunday), minute of the day (1-1440, every minute of a single day), activity_counts(the activity counts for each minute of that day), type_of_day(Monday-Friday are defined as weekdays, Saturday and Sunday are defined as weekends). There are `r nrow(ac_data)` observations in total, which contains 5 weeks, 35 days. So every day there are `r nrow(ac_data)/35` observations.
+
 
 
 
