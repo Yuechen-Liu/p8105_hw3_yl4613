@@ -111,6 +111,55 @@ ac_data = read.csv(
 ```
 The resulting data is tidier than the original dataset. It contains: number of the week (1-5), day_id(useless now so I left it alone), name of the data (Monday-Sunday), minute of the day (1-1440, every minute of a single day), activity_counts(the activity counts for each minute of that day), type_of_day(Monday-Friday are defined as weekdays, Saturday and Sunday are defined as weekends). There are `r nrow(ac_data)` observations in total, which contains 5 weeks, 35 days. So every day there are `r nrow(ac_data)/35` observations.
 
+Traditional analyses--total activity of the day.
+```{r}
+sum_data = 
+	tibble(ac_data) %>% 
+	group_by(day, week) %>% 
+	summarize(activity_of_day = sum(activity_counts)) %>% 
+	relocate(week) %>% 
+	arrange(week) %>% 
+	pivot_wider(
+		names_from = day,
+		values_from = activity_of_day) %>% 
+	relocate(week, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday)
+sum_data
+```
+Trends: The activity data during the middle of the week is more stable than that in weekends. For every week, week 1-3 have the most activities, whereas activities reduced during the last two weeks. 
+
+Plotting-24 hour activity
+```{r}
+ac_data %>% 
+	ggplot(aes(x = minute_of_the_day, y = activity_counts , color = day)) +
+	geom_line(alpha = .4) + 
+	labs(x = 'minute of the day',
+			 y = 'numbers of activity',
+			 title = 'Activities every minute during a day')
+```
+From this plot, we can see that the activities during daytime are higher, and during the night are lower. It indicates that this patient has a daily routine that: wakes up ~7-8 am, have some activities before noon. He might take a nap / have some rest in the afternoon. He has high activity during ~8-11pm. And he sleeps usually after 11pm.
+
+
+###Problem 3
+```{r}
+library(dplyr)
+library(rnoaa)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
