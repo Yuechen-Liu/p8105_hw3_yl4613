@@ -9,7 +9,7 @@ output: html_document
 ```{r setup, include = FALSE}
 library(tidyverse)
 library(p8105.datasets)
-
+library(patchwork)
 knitr::opts_chunk$set(
 	fig.width = 6,
 	fig.asp = .6,
@@ -140,22 +140,87 @@ From this plot, we can see that the activities during daytime are higher, and du
 
 
 ###Problem 3
+###load the data
 ```{r}
-library(dplyr)
-library(rnoaa)
+library(p8105.datasets)
+data("ny_noaa")
 ```
 
+Data cleaning
+```{r}
+ny = 
+	ny_noaa %>% 
+	janitor::clean_names() %>% 
+	separate(date, c('year','month','day')) %>% 
+	mutate(
+		prcp_mm = prcp / 10,
+		snow_mm = as.numeric(snow),
+		snwd_mm = as.numeric(snwd),
+		tmax = as.numeric(tmax),
+		tmax_C = tmax / 10,
+		tmin = as.numeric(tmin),
+		tmin_C = tmin / 10
+		) %>% 
+	select(-'prcp', -'snow', -'snwd', -'tmax', -'tmin')
+ny %>% 
+	count(snow_mm) %>% 
+	arrange(desc(n))
+```
+For snow fall, 0 is the most observed value. Because NY has no snow in most days of a year (even though it's very cold).
 
+Two-panel plot showing the average max temperature in January and in July in each station across years.
+```{r}
+Jan_Jul = 
+	ny %>% 
+	filter(month %in% c('01', '07')) %>%
+	filter(!is.na(tmax_C)) %>%
+	group_by(id, year, month) %>%
+	summarize(
+		avg_tmax = mean(tmax_C)
+	)
+Jan_Jul %>% 
+	ggplot(aes(x = year, y = avg_tmax, color = month, group = id))+
+	geom_point()+
+	labs(y = 'average maximum temperature',
+			 title = 'average max temperature in January and in July in each station across years')+
+	facet_grid(. ~ month)+
+	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+	
 
+```
+From the box plot, we can see that: In January from all years, the average maximum temperature is becoming more unstable--larger differences between years, and generally higher temperature in recent years. Compared to maximum temperatures in January, those in July are more stable and have smaller ranges (because summer is always pretty hot, but winter could be extremely cold/commonly cold/even a bit warm). There are outliers in most of the months, among them, in 1982 and 2005, ny had very cold days in Jan; in 1988, ny had a lowest maximum temperature in July.
 
+Make a two-panel plot showing (i) tmax vs tmin for the full dataset.
 
+```{r}
+max_min = 
+	ny %>% 
+	ggplot(aes(x = tmin_C, y = tmax_C))+
+	geom_smooth()+
+	labs(
+		y = 'maximum temperature',
+		x = 'minimum temperature',
+		title = 'Max temp vs. Min temp'
+	)
 
+```
+Comment: we can see that there is a huge difference in max vs min temperature in NY. There are extremely cold/ hot places, there are also mild-temperature places. 
 
+Make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+```{r}
+snow_distribution = 
+	ny %>% 
+	filter(snow_mm > 0, snow_mm < 100) %>% 
+	ggplot(aes(x = year, y = snow_mm))+
+	geom_boxplot()+
+	labs(y = 'Year',
+			 y = 'Snowfall(mm)',
+			 title = 'distribution of snowfall')+
+	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+(max_min) + (snow_distribution)
+```
 
-
-
-
-
+Comment: Distribution of snowfall were stable in the old days, but started to become a bit unstable from 1998. Then there were outliers in 2006 and 2010, more extreme snow distribution appeared in recent years.
 
 
 
