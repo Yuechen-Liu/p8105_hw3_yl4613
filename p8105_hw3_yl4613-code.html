@@ -549,6 +549,7 @@ summary {
 <p>###Problem 3 ###load the data</p>
 <pre class="r"><code>library(p8105.datasets)
 data(&quot;ny_noaa&quot;)</code></pre>
+<p>Description: This dataset is about some weather-related parameters in NY these decades. These parameters include precipitation, snow fall, snow depth, maximum and minimum temperature. We have 2595176observations and 7 variables. As for the missing data, that of temperatures are very obvious in the 80’s and 90’s. After converting, temperature are in degree celsius, and data about snow/precipitation are in mm.</p>
 <p>Data cleaning</p>
 <pre class="r"><code>ny = 
     ny_noaa %&gt;% 

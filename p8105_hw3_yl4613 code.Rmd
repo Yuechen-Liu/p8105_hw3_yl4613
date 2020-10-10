@@ -145,6 +145,7 @@ From this plot, we can see that the activities during daytime are higher, and du
 library(p8105.datasets)
 data("ny_noaa")
 ```
+Description: This dataset is about some weather-related parameters in NY these decades. These parameters include precipitation, snow fall, snow depth, maximum and minimum temperature. We have `r nrow(ny_noaa)`observations and `r ncol(ny_noaa)` variables. As for the missing data, that of temperatures are very obvious in the 80's and 90's. After converting, temperature are in degree celsius, and data about snow/precipitation are in mm.
 
 Data cleaning
 ```{r}
@@ -222,8 +223,7 @@ snow_distribution =
 
 Comment: Distribution of snowfall were stable in the old days, but started to become a bit unstable from 1998. Then there were outliers in 2006 and 2010, more extreme snow distribution appeared in recent years.
 
-
-
+ 
 
 
 
